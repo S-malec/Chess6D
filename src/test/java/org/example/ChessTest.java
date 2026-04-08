@@ -4,6 +4,8 @@ import org.junit.jupiter.api.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatCode;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class ChessTest {
     static Checkerboard ch;
@@ -22,16 +24,17 @@ class ChessTest {
 
     @Test
     public void correctSize() {
-        String s = ch.Display();
+        String s = ch.display();
 
-        assertThat(s.replaceAll(" ", "").replaceAll("\n", "").length()).isEqualTo(N*N);
+        System.out.println(s.replaceAll(" ", "").replaceAll("\n", "").replaceAll("@", ""));
+        assertThat(s.replaceAll(" ", "").replaceAll("\n", "").replaceAll("@", "").length()).isEqualTo((N)*(N));
     }
 
     @Test
     public void zeroedCheckerboard() {
-        String s = ch.Display();
+        String s = ch.display();
 
-        assertThat(s.replaceAll(" ", "").replaceAll("\n", "")).matches("0+");
+        assertThat(s.replaceAll(" ", "").replaceAll("\n", "").replaceAll("@", "")).matches("0+");
     }
 
     @Test
@@ -41,8 +44,8 @@ class ChessTest {
 
         ch.calcAttack();
 
-        assertThat(ch.szachownica[1][2]).isEqualTo('K');
-        assertThat(ch.szachownica[1][1]).isEqualTo('K');
+        assertThat(ch.szachownica[2][3]).isEqualTo('K');
+        assertThat(ch.szachownica[2][2]).isEqualTo('K');
     }
 
     @Test
@@ -52,10 +55,10 @@ class ChessTest {
 
         ch.calcAttack();
 
-        assertThat(ch.szachownica[0][1]).isEqualTo('2');
-        assertThat(ch.szachownica[0][2]).isEqualTo('2');
-        assertThat(ch.szachownica[2][1]).isEqualTo('2');
-        assertThat(ch.szachownica[2][2]).isEqualTo('2');
+        assertThat(ch.szachownica[1][2]).isEqualTo('2');
+        assertThat(ch.szachownica[1][3]).isEqualTo('2');
+        assertThat(ch.szachownica[3][2]).isEqualTo('2');
+        assertThat(ch.szachownica[3][3]).isEqualTo('2');
     }
 
     @Test
@@ -66,9 +69,9 @@ class ChessTest {
             ch.calcAttack();
         }).doesNotThrowAnyException();
 
-        assertThat(ch.szachownica[0][1]).isEqualTo('1'); // prawo
-        assertThat(ch.szachownica[1][0]).isEqualTo('1'); // dol
-        assertThat(ch.szachownica[1][1]).isEqualTo('1'); // skos
+        assertThat(ch.szachownica[1][2]).isEqualTo('1'); // prawo
+        assertThat(ch.szachownica[2][1]).isEqualTo('1'); // dol
+        assertThat(ch.szachownica[2][2]).isEqualTo('1'); // skos
     }
 
     @Test
@@ -78,6 +81,26 @@ class ChessTest {
 
         ch.calcAttack();
 
-        assertThat(ch.szachownica[0][1]).isEqualTo('*');
+        assertThat(ch.szachownica[1][2]).isEqualTo('*');
     }
+
+    @Test
+    public void shouldNotAttackBorder(){
+        ch.placeK(0, 0);
+        ch.calcAttack();
+
+        assertThat(ch.szachownica[0][0]).isEqualTo('@');
+        assertThat(ch.szachownica[0][1]).isEqualTo('@');
+        assertThat(ch.szachownica[0][2]).isEqualTo('@');
+        assertThat(ch.szachownica[1][0]).isEqualTo('@');
+        assertThat(ch.szachownica[2][0]).isEqualTo('@');
+    }
+
+    @Test
+    public void placingOnBorderThrowsIllegalArgumentException() {
+        assertThrows(IndexOutOfBoundsException.class, () -> {
+            ch.placeK(5, 0);
+            ch.calcAttack();
+        });
+}
 }
