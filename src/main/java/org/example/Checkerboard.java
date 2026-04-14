@@ -161,32 +161,61 @@ public class Checkerboard {
     private void cannonShot(Cannon c) {
         switch (c.c) {
             case '|':
-                for (int i = 0; i < szachownica.length; i++) {
+                // Strzał w górę
+                for (int i = c.i - 1; i >= 0; i--) {
+                    if (isObstacle(i, c.j))
+                        break;
+                    updateCell(i, c.j);
+                }
+                // Strzał w dół
+                for (int i = c.i + 1; i < szachownica.length; i++) {
+                    if (isObstacle(i, c.j))
+                        break;
                     updateCell(i, c.j);
                 }
                 break;
+
             case '-':
-                for (int j = 0; j < szachownica[0].length; j++) {
+                // Strzał w lewo
+                for (int j = c.j - 1; j >= 0; j--) {
+                    if (isObstacle(c.i, j))
+                        break;
+                    updateCell(c.i, j);
+                }
+                // Strzał w prawo
+                for (int j = c.j + 1; j < szachownica[0].length; j++) {
+                    if (isObstacle(c.i, j))
+                        break;
                     updateCell(c.i, j);
                 }
                 break;
+
             case '\\':
-                // Lewo-Góra (i--, j--)
-                for (int i = c.i, j = c.j; i >= 0 && j >= 0; i--, j--) {
+                // Lewo-Góra
+                for (int i = c.i - 1, j = c.j - 1; i >= 0 && j >= 0; i--, j--) {
+                    if (isObstacle(i, j))
+                        break;
                     updateCell(i, j);
                 }
-                // Prawo-Dół (i++, j++)
-                for (int i = c.i, j = c.j; i < N && j < N; i++, j++) {
+                // Prawo-Dół
+                for (int i = c.i + 1, j = c.j + 1; i < N && j < N; i++, j++) {
+                    if (isObstacle(i, j))
+                        break;
                     updateCell(i, j);
                 }
                 break;
+
             case '/':
-                // Prawo-Góra (i++, j--)
-                for (int i = c.i, j = c.j; i < N && j >= 0; i++, j--) {
+                // Prawo-Góra
+                for (int i = c.i - 1, j = c.j + 1; i >= 0 && j < N; i--, j++) {
+                    if (isObstacle(i, j))
+                        break;
                     updateCell(i, j);
                 }
-                // Lewo-Dół (i--, j++)
-                for (int i = c.i, j = c.j; i >= 0 && j < N; i--, j++) {
+                // Lewo-Dół
+                for (int i = c.i + 1, j = c.j - 1; i < N && j >= 0; i++, j--) {
+                    if (isObstacle(i, j))
+                        break;
                     updateCell(i, j);
                 }
                 break;

@@ -27,7 +27,7 @@ class ChessTest {
         String s = ch.display();
 
         System.out.println(s.replaceAll(" ", "").replaceAll("\n", "").replaceAll("@", ""));
-        assertThat(s.replaceAll(" ", "").replaceAll("\n", "").replaceAll("@", "").length()).isEqualTo((N)*(N));
+        assertThat(s.replaceAll(" ", "").replaceAll("\n", "").replaceAll("@", "").length()).isEqualTo((N) * (N));
     }
 
     @Test
@@ -39,8 +39,8 @@ class ChessTest {
 
     @Test
     public void ifKingsStandNextToEachOtherKingsValueDosentChange() {
-        ch.placeK(1,1);
-        ch.placeK(1,2);
+        ch.placeK(1, 1);
+        ch.placeK(1, 2);
 
         ch.calcAttack();
 
@@ -50,8 +50,8 @@ class ChessTest {
 
     @Test
     public void ifKingsStandNextToEachOtherSameAttackedFieldIsIncreased() {
-        ch.placeK(1,1);
-        ch.placeK(1,2);
+        ch.placeK(1, 1);
+        ch.placeK(1, 2);
 
         ch.calcAttack();
 
@@ -85,7 +85,7 @@ class ChessTest {
     }
 
     @Test
-    public void shouldNotAttackBorder(){
+    public void shouldNotAttackBorder() {
         ch.placeK(0, 0);
         ch.calcAttack();
 
@@ -102,5 +102,62 @@ class ChessTest {
             ch.placeK(5, 0);
             ch.calcAttack();
         });
-}
+    }
+
+    @Test
+    public void cannonShouldShootCorrectlyWhenKingIsAdjacent() {
+        ch.placeCannon(2, 2, '-');
+        ch.placeK(2, 1);
+
+        ch.calcAttack();
+
+        assertThat(ch.szachownica[3][4]).isEqualTo('1');
+    }
+
+    @Test
+    public void cannonShouldNotShootIfNoKingNearby() {
+        ch.placeCannon(2, 2, '|');
+
+        ch.calcAttack();
+
+        assertThat(ch.szachownica[2][3]).isEqualTo('0');
+    }
+
+    @Test
+    public void cannonShotShouldBeBlockedByStar() {
+        ch.placeCannon(3, 3, '|');
+        ch.placeK(3, 2);
+        ch.placeStar(1, 3);
+
+        ch.calcAttack();
+
+        assertThat(ch.szachownica[1][4]).isEqualTo('0');
+    }
+
+    @Test
+    public void funnyAttackShouldWrapAroundBoard() {
+        ch.placeK(0, 0);
+
+        ch.calcAttack();
+
+        assertThat(ch.szachownica[1][5]).isGreaterThan('0');
+        assertThat(ch.szachownica[2][5]).isGreaterThan('0');
+    }
+
+    @Test
+    public void shouldThrowExceptionForInvalidCannonCharacter() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            new Cannon(1, 1, 'X');
+        });
+    }
+
+    @Test
+    public void multipleKingsShouldIncrementAttackCount() {
+        ch.placeK(1, 1);
+        ch.placeK(1, 3);
+
+        ch.calcAttack();
+
+        assertThat(ch.szachownica[2][3]).isEqualTo('2');
+    }
 }
